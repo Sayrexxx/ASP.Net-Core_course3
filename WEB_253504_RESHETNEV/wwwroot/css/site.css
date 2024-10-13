@@ -1,0 +1,24 @@
+header, footer {
+  background-color: rgba(var(--bs-dark-rgb));
+}
+
+.nav-color {
+  color: rgba(255, 255, 255, 0.5)
+}
+
+.icon-container {
+  display: flex;
+  justify-content: flex-end;
+}
+
+main {
+  flex: 1;
+  padding: 20px;
+}
+
+footer{
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+}

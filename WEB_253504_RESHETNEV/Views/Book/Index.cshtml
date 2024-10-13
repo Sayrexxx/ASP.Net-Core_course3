@@ -1,0 +1,91 @@
+@{
+ViewBag.Title = "Books";
+var request = ViewContext.HttpContext.Request;
+var returnUrl = request.Path + request.QueryString.ToUriComponent();
+}
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model WEB_253504_RESHETNEV.Domain.Models.ProductListModel<Book>
+<div class="col-2 border-2">
+    <ul class="nav">
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle"
+               data-bs-toggle="dropdown"
+               href="#"
+               role="button"
+               aria-expanded="false">
+                @ViewData["currentGenre"]
+            </a>
+            <ul class="dropdown-menu">
+                <li>
+                    <a class="dropdown-item"
+                       asp-controller="Book"
+                       asp-route-genre="all"
+                       asp-route-page="1">Все</a>
+                </li>
+                @foreach(var genre in (List<Genre>)ViewData["genres"])
+                {
+                    <li>
+                        <a class="dropdown-item"
+                           asp-controller="Book"
+                           asp-route-genre="@genre.NormalizedName"
+                           asp-route-page="1">
+                            @genre.Name
+                        </a>
+                    </li>
+                }
+            </ul>
+        </li>
+    </ul>
+</div>
+
+<div class="row">
+    @foreach (var item in Model.Items)
+    {
+    <div class="col-sm-4 mb-4" style="background-color: #000000; display: block">
+        <div class="card shadow-sm">
+            <div class="card-body d-flex align-items-start" style="height:fit-content">
+                <div class="me-3">
+                    <img src="@item.ImagePath" alt="No Image" class="img-fluid rounded" style="max-height: 250px; max-width: 200px; margin-bottom: 15px;" />
+                    <a asp-controller="Cart" asp-action="Add"
+                       asp-route-id="@item.Id"
+                       asp-route-returnUrl="@returnUrl"
+                       class="btn btn-primary mt-2" style="width: 100%; background-color: #d63384">Добавить в корзину</a>
+                </div>
+                <div>
+                    <h5 class="card-title">@item.Name</h5>
+                    <p class="card-text">@item.Description</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+</div>
+
+@{
+var currPage = Convert.ToInt32(Context.Request.Query["page"].FirstOrDefault());
+var prevPage = currPage == 1 ? 1 : currPage - 1;
+var totalPages = Convert.ToInt32(ViewData["totalPages"]);
+var nextPage = currPage == totalPages ? totalPages : currPage + 1;
+}
+<nav aria-label="Page navigation">
+    <ul class="pagination">
+        <li class="page-item" @(currPage == 1 ? "disabled": "")>
+            <a class="page-link" aria-label="Previous" asp-route-genre="@(Context.Request.Query["genre"])" asp-route-page="@(prevPage)">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        @{
+        for(int i = 0; i < totalPages; i++)
+        {
+        <li class="page-item @(currPage == i + 1 ? "active" : "")" aria-current="page">
+            <a class="page-link" asp-route-genre="@(Context.Request.Query["genre"])" asp-route-page="@(i + 1)">@(i + 1)</a>
+        </li>
+        }
+        }
+        <li class="page-item" @(currPage == totalPages ? "disabled": "")>
+            <a class="page-link" aria-label="Next" asp-route-genre="@(Context.Request.Query["genre"])" asp-route-page="@(nextPage)">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+    </ul>
+</nav>

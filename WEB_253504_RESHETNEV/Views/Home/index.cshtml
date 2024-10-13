@@ -1,0 +1,57 @@
+@{
+    ViewBag.Title = "Index";
+}
+
+
+<main class="container mt-5">
+    <h1>@ViewData["Text"]</h1>
+    <div class="row">
+        <div class="col-md-12">
+            <h4>Список</h4>
+            <ol type="A">
+                @{
+                    for (int i = 0; i < 5; i++)
+                    {
+                        <li>Элемент @i списка</li>
+                    }
+                }
+            </ol>
+        </div>
+        <div class="col-md-12 mt-4">
+            <h4>Форма</h4>
+            <form method="post">
+                <div class="mb-3">
+                    <label for="selectList" class="form-label">Выберите элемент:</label>
+                    <select id="selectList" name="selectedItemId" class="form-select" asp-items="@Model"></select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Выберите один вариант:</label>
+                    <div class="d-flex align-items-center">
+                        <div class="form-check me-3">
+                            <input type="radio" id="radio1" name="radio" value="1" class="form-check-input">
+                            <label for="radio1" class="form-check-label">Радио-1</label>
+                        </div>
+                        <div class="form-check me-3">
+                            <input type="radio" id="radio2" name="radio" value="2" class="form-check-input">
+                            <label for="radio2" class="form-check-label">Радио-2</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="radio" id="radio3" name="radio" value="3" class="form-check-input">
+                            <label for="radio3" class="form-check-label">Радио-3</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="login" class="form-label">Логин:</label>
+                    <input type="text" id="login" name="login" class="form-control" placeholder="Введите имя">
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Пароль:</label>
+                    <input type="password" id="password" name="password" class="form-control" placeholder="Введите пароль">
+                </div>
+                <button type="submit" class="btn btn-primary">Отправить</button>
+            </form>
+        </div>
+    </div>
+</main>
+
