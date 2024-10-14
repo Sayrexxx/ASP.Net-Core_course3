@@ -1,7 +1,7 @@
 using WEB_253504_RESHETNEV.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-
+using WEB_253504_RESHETNEV;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +12,9 @@ builder.Services.AddDbContext<BookContext>(options =>
 builder.Services.AddControllersWithViews();
 
 builder.RegisterCustomServices();
+
+builder.Services.Configure<UriData>(builder.Configuration.GetSection("UriData"));
+
 
 var app = builder.Build();
 

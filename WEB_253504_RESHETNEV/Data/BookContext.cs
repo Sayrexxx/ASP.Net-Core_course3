@@ -12,5 +12,5 @@ using WEB_253504_RESHETNEV.Domain.Entities;
         {
         }
 
-        public DbSet<WEB_253504_RESHETNEV.Domain.Entities.Book> Movie { get; set; } = default!;
+        public DbSet<WEB_253504_RESHETNEV.Domain.Entities.Book> Books { get; set; } = default!;
     }
