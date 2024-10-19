@@ -9,5 +9,5 @@ public interface IGenreService
     /// Получение списка всех категорий
     /// </summary>
     /// <returns></returns>
-    public Task<ResponseData<List<Genre>>> GetGenreListAsync();
+    public Task<ResponseData<List<Genre>>?> GetGenreListAsync();
 }

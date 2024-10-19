@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using WEB_253504_RESHETNEV.API.Services.GenreServices;
 using WEB_253504_RESHETNEV.Domain.Entities;
+using WEB_253504_RESHETNEV.Domain.Models;
 
-namespace XXX.Api.Controllers
+namespace WEB_253504_RESHETNEV.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -16,38 +17,41 @@ namespace XXX.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Genre>>> GetGenres()
+        public async Task<ActionResult<ResponseData<List<Genre>>>> GetGenres()
         {
             var genres = await _genreService.GetGenresAsync();
-            return Ok(genres);
+            if (genres == null)
+                return NotFound(ResponseData<List<Genre>>.Error("Genres not found"));
+
+            return Ok(ResponseData<List<Genre>>.Success((List<Genre>)genres));
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Genre>> GetGenre(int id)
+        public async Task<ActionResult<ResponseData<Genre>>> GetGenre(int id)
         {
             var genre = await _genreService.GetGenreByIdAsync(id);
             if (genre == null)
-                return NotFound();
+                return NotFound(ResponseData<Genre>.Error("Genre not found"));
 
-            return Ok(genre);
+            return Ok(ResponseData<Genre>.Success(genre));
         }
 
         [HttpPost]
-        public async Task<ActionResult<Genre>> PostGenre(Genre genre)
+        public async Task<ActionResult<ResponseData<Genre>>> PostGenre(Genre genre)
         {
             var createdGenre = await _genreService.CreateGenreAsync(genre);
-            return CreatedAtAction(nameof(GetGenre), new { id = createdGenre.Id }, createdGenre);
+            return CreatedAtAction(nameof(GetGenre), new { id = createdGenre.Id }, ResponseData<Genre>.Success(createdGenre));
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> PutGenre(int id, Genre genre)
         {
             if (id != genre.Id)
-                return BadRequest();
+                return BadRequest(ResponseData<Genre>.Error("ID mismatch"));
 
             var result = await _genreService.UpdateGenreAsync(genre);
             if (!result)
-                return NotFound();
+                return NotFound(ResponseData<Genre>.Error("Genre not found"));
 
             return NoContent();
         }
@@ -57,7 +61,7 @@ namespace XXX.Api.Controllers
         {
             var result = await _genreService.DeleteGenreAsync(id);
             if (!result)
-                return NotFound();
+                return NotFound(ResponseData<Genre>.Error("Genre not found"));
 
             return NoContent();
         }

@@ -1,3 +1,5 @@
+using WEB_253504_RESHETNEV.Domain.Entities;
+
 namespace WEB_253504_RESHETNEV.Domain.Models;
 
 public class ResponseData<T>
@@ -25,7 +27,7 @@ public class ResponseData<T>
     /// <param name="message">Сообщение об ошибке</param>
     /// <param name="data">Передаваемые данные</param>
     /// <returns></returns>
-    public static ResponseData<T> Error(string message, T? data = default)
+    public static ResponseData<T>? Error(string message, T? data = default)
     {
         return new ResponseData<T> { ErrorMessage = message, Successfull = false, Data = data };
     }

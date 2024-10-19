@@ -1,19 +1,64 @@
 using WEB_253504_RESHETNEV.Extensions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using WEB_253504_RESHETNEV;
+using WEB_253504_RESHETNEV.Services.ApiServices;
+using WEB_253504_RESHETNEV.Services.BookServices;
+using WEB_253504_RESHETNEV.Services.GenreServices;
 
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<BookContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MovieContext") ?? throw new InvalidOperationException("Connection string 'MovieContext' not found.")));
 
+
+// Логирование
+builder.Services.AddLogging();
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
 builder.RegisterCustomServices();
 
-builder.Services.Configure<UriData>(builder.Configuration.GetSection("UriData"));
+
+// Получаем конфигурацию
+var configuration = builder.Configuration;
+
+var uriData = builder.Configuration.GetSection("UriData").Get<UriData>();
+
+builder.Services.AddHttpClient<IGenreService, ApiGenreService>((serviceProvider, client) =>
+    {
+        client.BaseAddress = new Uri(uriData!.ApiUri);
+
+        // Отключаем проверку сертификатов (только для разработки)
+        client.DefaultRequestVersion = new Version(2, 0); // Добавьте это, чтобы избежать проблем с HTTP/2
+        client.DefaultRequestHeaders.Add("User-Agent", "HttpClientFactory-Sample"); // Можно добавить user-agent
+    })
+    .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+    {
+        ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+    });
+
+
+builder.Services.AddHttpClient<IBookService, ApiBookService>((serviceProvider, client) =>
+    {
+        client.BaseAddress = new Uri(uriData!.ApiUri);
+
+        client.DefaultRequestVersion = new Version(2, 0);
+        client.DefaultRequestHeaders.Add("User-Agent", "HttpClientFactory-Sample");
+    })
+    .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+    {
+        ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+    });
+
+
+
+//
+// builder.Services.Configure<UriData>(builder.Configuration.GetSection("UriData"));
+// // Регистрация HttpClient для сервисов
+// builder.Services.AddHttpClient<IGenreService, ApiGenreService>(opt=> opt.BaseAddress=new Uri(UriData.ApiUri));
+// builder.Services.AddHttpClient<IGenreService, ApiGenreService>(opt=> opt.BaseAddress=new Uri(UriData.ApiUri));
 
 
 var app = builder.Build();

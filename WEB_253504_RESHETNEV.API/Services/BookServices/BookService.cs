@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using WEB_253504_RESHETNEV.API.Data;
 using WEB_253504_RESHETNEV.Domain.Entities;
+using WEB_253504_RESHETNEV.Domain.Models;
 
 namespace WEB_253504_RESHETNEV.API.Services.BookServices
 {
@@ -13,7 +14,7 @@ namespace WEB_253504_RESHETNEV.API.Services.BookServices
             _context = context;
         }
 
-        public async Task<IEnumerable<Book>> GetBooksAsync()
+        public async Task<List<Book>> GetBooksAsync()
         {
             return await _context.Books.Include(b => b.Genre).ToListAsync();
         }
@@ -23,6 +24,10 @@ namespace WEB_253504_RESHETNEV.API.Services.BookServices
             return await _context.Books.Include(b => b.Genre).FirstOrDefaultAsync(b => b.Id == id);
         }
 
+        public async Task<List<Book>> GetBooksByGenreAsync(string genreName)
+        {
+            return await _context.Books.Where(b => b.Genre!.NormalizedName == genreName).Include(b => b.Genre).ToListAsync();
+        }
         public async Task<Book> CreateBookAsync(Book book)
         {
             _context.Books.Add(book);
